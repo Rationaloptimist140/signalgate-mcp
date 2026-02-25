@@ -1,0 +1,22 @@
+{
+  "name": "signalgate-mcp",
+  "version": "1.0.8",
+  "description": "The sentiment engine for the AI Agent economy. Powered by Gemini 2.0.",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "signalgate": "./index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.1"
+  },
+  "author": "RK (SignalGate)",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "ai-agents",
+    "crypto",
+    "solana",
+    "gemini-2.0"
+  ]
+}
