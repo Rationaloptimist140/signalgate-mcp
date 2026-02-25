@@ -75,7 +75,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         content: [
           {
             type: "text",
-            text: `🎯 Alpha for ${ticker}: ${result.data.sentiment} (Score: ${result.data.score}/100)\n\n${result.data.thesis}`,
+            text: `Alpha for ${ticker}: ${result.data.sentiment} (Score: ${result.data.score}/100)\n\n${result.data.thesis}`,
           },
         ],
       };
