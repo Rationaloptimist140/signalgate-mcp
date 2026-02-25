@@ -62,7 +62,7 @@ Is ETH bullish or bearish right now?
 ### Tool: `get_sentiment`
 
 | Parameter | Type   | Required | Description              |
-|-----------|--------|----------|--------------------------||
+|-----------|--------|----------|-----------------------------||
 | `ticker`  | string | Yes      | Crypto ticker: BTC, ETH, SOL |
 
 **Example response:**
@@ -99,5 +99,3 @@ npm install -g signalgate-mcp
 ## License
 
 MIT — built by [RK / SignalGate](https://signalgate-web.vercel.app)
-
----
