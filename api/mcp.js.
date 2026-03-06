@@ -1,1 +1,56 @@
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
+import {
+  CallToolRequestSchema,
+  ListToolsRequestSchema,
+} from "@modelcontextprotocol/sdk/types.js";
 
+const server = new Server(
+  { name: "signalgate-cloud", version: "1.1.0" },
+  { capabilities: { tools: {} } }
+);
+
+server.setRequestHandler(ListToolsRequestSchema, async () => ({
+  tools: [{
+    name: "get_sentiment",
+    description: "Get real-time Gemini 2.0 crypto sentiment for BTC, ETH, or SOL.",
+    inputSchema: {
+      type: "object",
+      properties: { ticker: { type: "string" } },
+      required: ["ticker"],
+    },
+  }],
+}));
+
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  const { name, arguments: args } = request.params;
+  const apiKey = request.params.env?.SIGNALGATE_API_KEY || process.env.SIGNALGATE_API_KEY;
+
+  if (name === "get_sentiment") {
+    const ticker = args.ticker.toUpperCase();
+    const res = await fetch(`https://signalgate-web.vercel.app/api/sentiment?symbol=${ticker}`, {
+        headers: { "Authorization": `Bearer ${apiKey}` }
+    });
+    
+    const result = await res.json();
+    if (!res.ok) return { content: [{ type: "text", text: `Error: ${result.error}` }], isError: true };
+
+    return {
+      content: [{ type: "text", text: `🎯 Alpha for ${ticker}: ${result.data.sentiment} (Score: ${result.data.score}/100)\n\n${result.data.thesis}` }]
+    };
+  }
+});
+
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  const transport = new SSEServerTransport("/api/mcp", res);
+  await server.connect(transport);
+  transport.handleMessage(req, res);
